@@ -62,6 +62,8 @@ int main() {
     return 0;
 }
 ```
+___
+
 ### Resolve Services from the Dependency Injection Container
 To resolve a service, call the appropriate resolve function depending on the type of the registered service.
 
@@ -101,14 +103,51 @@ private:
 ```
 
 memory is managed internally using smart pointers, in the case of scoped dependencies, weak pointers are returned to regulate the life time scope of the service it holds.
+
 To minimize footprint, the code makes no use of macros nor other "compiler magic" nor runtime post-processing effects either, maximizing the speed you get in your application.
+
 Injec++or is a header only library, for easy incorporation in you program. 
 
-## Contributions
-We welcome contributions! Please see our contribution guide for more details.
+___
+
+## How to contribute
+
+We absolutely welcome and encourage contributions! If you'd like to contribute, here are some guidelines to help you get started.
+
+1. **Fork the repository and clone it locally.** Use git to fork the repository, clone it to your local machine, and add the original repository as an upstream remote.
+
+    ```
+    git clone https://github.com/Fabrizio86/Injecttor.git
+    git remote add upstream https://github.com/Fabrizio86/Injecttor.git
+    ```
+
+2. **Create a new branch for your fix or feature.** Try to name your branch in a way that describes the fix or feature.
+
+    ```
+    git checkout -b branch-name
+    ```
+
+3. **Write your code.** Make your changes in your new branch. Ensure your code is clean, well-commented, and adheres to the project's style guidelines.
+
+4. **Test your changes.** Make sure your changes don't break any existing functionality, and that they fully address the issue or implement the feature.
+
+5. **Commit and push your changes.** Write a meaningful commit message. Push your changes to your fork on GitHub.
+
+    ```
+    git commit -m "Commit message"
+    git push origin branch-name
+    ```
+
+6. **Create a pull request.** Go to your repository on GitHub, and click the "New Pull Request" button. Fill out the form to create a PR.
+
+Before you create a pull request, please ensure that your code can be merged without conflicts and that all tests pass. After you submit a PR, we will review your contribution. We might ask for changes before merging your code. We appreciate your patience and help in improving our project.
+
+Thank you for your interest in our project, and we are excited to reviewing your contribution!
 
 ## Licence
 Copyright © 2024 by Aedifex Solutions Inc. All Rights Reserved.
+
+
 This software is provided under MIT license, please make sure you understand the implication before using this Software, in your own project.
 
 
