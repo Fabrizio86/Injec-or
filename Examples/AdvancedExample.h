@@ -14,6 +14,7 @@ namespace AdvancedExample {
 
     class ILogger {
     public:
+        virtual ~ILogger() = default;
         virtual void Log(const std::string &message) = 0;
     };
 
@@ -29,6 +30,7 @@ namespace AdvancedExample {
 
     class IDatabase {
     public:
+        virtual ~IDatabase() = default;
         virtual void Save(const std::string &data) = 0;
     };
 
@@ -108,6 +110,7 @@ namespace AdvancedExample {
     }
 
     void RunAdvanceExample() {
+        auto start = std::chrono::high_resolution_clock::now();
         std::cout << "Advanced Example, register services\n";
 
         DI::Container::Instance().RegisterSingleton<AdvancedExample::ILogger, AdvancedExample::Logger>();
@@ -117,7 +120,10 @@ namespace AdvancedExample {
 
         resolveAndUseService();
 
-        std::cout << "Done!\n-------\n";
+
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> ms_double = end - start;
+        std::cout << "Done! Execution time: " << ms_double.count() << " ms\n-------\n";
     }
 
 }

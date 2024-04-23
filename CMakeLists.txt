@@ -9,5 +9,7 @@ add_executable(InjecttorTest main.cpp
         main.cpp
         Examples/SimpleExample.h
         Examples/SubDependencyExample.h
-        Examples/AdvancedExample.h)
+        Examples/AdvancedExample.h
+        Examples/WebExample.h
+        Examples/AdvancedWebExample.h)
 target_link_libraries(InjecttorTest PRIVATE Injecttor)

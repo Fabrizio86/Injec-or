@@ -43,6 +43,7 @@ namespace SubDependencies {
     };
 
     void resolveAndUseService() {
+        auto start = std::chrono::high_resolution_clock::now();
         std::cout << "Resolve dependencies\n";
 
         auto singletonService = DI::Container::Instance().ResolveSingleton<IService>();
@@ -58,7 +59,9 @@ namespace SubDependencies {
             servicePtr->DoSomething();
         }
 
-        std::cout << "Done!\n-------\n";
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> ms_double = end - start;
+        std::cout << "Done! Execution time: " << ms_double.count() << " ms\n-------\n";
     }
 
     void RunSubDependency() {

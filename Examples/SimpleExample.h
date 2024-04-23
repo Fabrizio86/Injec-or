@@ -32,6 +32,8 @@ namespace SimpleExample {
     }
 
     void RunSimpleService() {
+        auto start = std::chrono::high_resolution_clock::now();
+
         Register();
 
         std::cout << "Resolve dependencies\n";
@@ -49,7 +51,10 @@ namespace SimpleExample {
             servicePtr->DoSomething();
         }
 
-        std::cout << "Done!\n-------\n";
+
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> ms_double = end - start;
+        std::cout << "Done! Execution time: " << ms_double.count() << " ms\n-------\n";
     }
 
 }
