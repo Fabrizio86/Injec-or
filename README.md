@@ -1,6 +1,7 @@
 # Injec++or: C++ Dependency Injection Container
 
-Injec++or is a powerful and efficient Dependency Injection(DI) library designed to introduce feature and semantics known to developers in other languages, bringing them to your C++ projects, aiming to simplify your application development by managing your class dependencies, this way improving code readability, modularity and overall software design.
+Injec++or is a powerful and efficient Dependency Injection(DI) library designed to introduce feature and semantics known to developers in other languages, bringing them to your C++ projects, aiming to
+simplify your application development by managing your class dependencies, this way improving code readability, modularity and overall software design.
 
 ## Features
 
@@ -9,9 +10,11 @@ Injec++or is a powerful and efficient Dependency Injection(DI) library designed 
 - Auto-managed class dependencies
 
 ---
+
 ## Container
 
-**Injec++or** provides a container class for dependency injection where you can register services and later, recover them. Services in dependency injection are the dependencies that can be injected into components (like classes).
+**Injec++or** provides a container class for dependency injection where you can register services and later, recover them. Services in dependency injection are the dependencies that can be injected
+into components (like classes).
 
 There are three types of services *Injec++or* can manage:
 
@@ -20,11 +23,13 @@ There are three types of services *Injec++or* can manage:
 3. **Scoped**: These services are created once per scope and are shared among all within that same scope.
 
 For example:
+
 - Singleton services could be useful for stateful services.
 - Transient services could be useful for stateless services.
 - Scoped services could be useful for services where specific instances should be shared in a specific context.
 
 ---
+
 ## Usage
 
 Here is an example of how to use **Injec++or**:
@@ -45,7 +50,9 @@ public:
     }
 };
 ```
+
 ### Register Services in the Dependency Injection Container
+
 Services are registered in main.
 
 ```c++
@@ -62,9 +69,11 @@ int main() {
     return 0;
 }
 ```
+
 ___
 
 ### Resolve Services from the Dependency Injection Container
+
 To resolve a service, call the appropriate resolve function depending on the type of the registered service.
 
 ```c++
@@ -77,9 +86,11 @@ auto transientService = DI::Container::Instance().ResolveTransient<IMyService>()
 }
 
 ```
+
 Now you can use these service instances in your classes, leaving Injec++or to take care of managing the service life cycles and dependencies.
 
 ## Constructor Injection
+
 Here is an example of getting dependencies injected within a constructor.
 
 ```c++
@@ -106,7 +117,7 @@ memory is managed internally using smart pointers, in the case of scoped depende
 
 To minimize footprint, the code makes no use of macros nor other "compiler magic" nor runtime post-processing effects either, maximizing the speed you get in your application.
 
-Injec++or is a header only library, for easy incorporation in you program. 
+Injec++or is a header only library, for easy incorporation in you program.
 
 ___
 
@@ -140,13 +151,14 @@ We absolutely welcome and encourage contributions! If you'd like to contribute, 
 
 6. **Create a pull request.** Go to your repository on GitHub, and click the "New Pull Request" button. Fill out the form to create a PR.
 
-Before you create a pull request, please ensure that your code can be merged without conflicts and that all tests pass. After you submit a PR, we will review your contribution. We might ask for changes before merging your code. We appreciate your patience and help in improving our project.
+Before you create a pull request, please ensure that your code can be merged without conflicts and that all tests pass. After you submit a PR, we will review your contribution. We might ask for
+changes before merging your code. We appreciate your patience and help in improving our project.
 
 Thank you for your interest in our project, and we are excited to reviewing your contribution!
 
 ## Licence
-Copyright © 2024 by Aedifex Solutions Inc. All Rights Reserved.
 
+Copyright © 2024 by Aedifex Solutions Inc. All Rights Reserved.
 
 This software is provided under MIT license, please make sure you understand the implication before using this Software, in your own project.
 

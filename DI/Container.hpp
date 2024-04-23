@@ -1,8 +1,9 @@
 // Created by Fabrizio Paino on 2024-04-22.
 // Copyright (c) 2024 Aedifex Solutions Inc. All rights reserved.
 
-#ifndef INJECTTORTEST_CONTAINER_H
-#define INJECTTORTEST_CONTAINER_H
+#ifndef INJECTTORTEST_CONTAINER_HPP
+#define INJECTTORTEST_CONTAINER_HPP
+
 #include <typeinfo>
 #include <unordered_map>
 #include <memory>
@@ -27,6 +28,8 @@ namespace DI {
 
     template<class T>
     using CreatorSharedFnc = std::function<std::shared_ptr<T>()>;
+
+    using MapType = std::unordered_map<std::string, std::shared_ptr<BaseService>>;
 
     /**
     * @class TypedService
@@ -165,20 +168,23 @@ namespace DI {
         * @throw std::runtime_error if the singleton service is already registered.
         */
         template<class TInterface, class TImplementation>
-        void RegisterSingleton() {
+        void RegisterSingleton(std::string tag = "") {
             static_assert(std::is_base_of<TInterface, TImplementation>::value,
                           "TImplementation should derive from TInterface");
 
             std::string typeName = typeid(TInterface).name();
-
-            if (singletonServices.find(typeName) != singletonServices.end()) {
-                throw std::runtime_error("Singleton Service already registered: " + typeName);
+            auto mapIt = singletonServices.find(typeName);
+            if (mapIt != singletonServices.end()) {
+                auto tagIt = mapIt->second.find(tag);
+                if (tagIt != mapIt->second.end()) {
+                    throw std::runtime_error("Singleton Service already registered");
+                }
             }
 
             auto service = std::make_shared<TypedServiceSingleton<TInterface>>();
             service->SetCreator([] { return std::make_shared<TImplementation>(); });
 
-            singletonServices[typeName] = service;
+            singletonServices[typeName][tag] = service;
         }
 
         /**
@@ -196,20 +202,25 @@ namespace DI {
         * @throw std::runtime_error if the transient service is already registered.
         */
         template<class TInterface, class TImplementation>
-        void RegisterTransient() {
+        void RegisterTransient(std::string tag = "") {
             static_assert(std::is_base_of<TInterface, TImplementation>::value,
                           "TImplementation should derive from TInterface");
 
             std::string typeName = typeid(TInterface).name();
+            auto mapIt = transientServices.find(typeName);
 
-            if (transientServices.find(typeName) != transientServices.end()) {
-                throw std::runtime_error("Transient Service already registered: " + typeName);
+            if (mapIt != transientServices.end()) {
+                auto tagIt = mapIt->second.find(tag);
+
+                if (tagIt != mapIt->second.end()) {
+                    throw std::runtime_error("Transient service already registered with this tag");
+                }
             }
 
             auto service = std::make_shared<TypedService<TInterface>>();
             service->SetCreator([] { return std::make_shared<TImplementation>(); });
 
-            transientServices.insert({typeName, service});
+            transientServices[typeName][tag] = service;
         }
 
         /**
@@ -227,19 +238,23 @@ namespace DI {
         * @throw std::runtime_error if the scoped service is already registered.
         */
         template<class TInterface, class TImplementation>
-        void RegisterScoped() {
+        void RegisterScoped(std::string tag = "") {
             static_assert(std::is_base_of<TInterface, TImplementation>::value,
                           "TImplementation should derive from TInterface");
 
             std::string typeName = typeid(TInterface).name();
-            if (scopedServices.find(typeName) != scopedServices.end()) {
-                throw std::runtime_error("Scoped Service is already registered: " + typeName);
+            auto mapIt = scopedServices.find(typeName);
+            if (mapIt != scopedServices.end()) {
+                auto tagIt = mapIt->second.find(tag);
+                if(tagIt != mapIt->second.end()){
+                    throw std::runtime_error("Scoped Service is already registered");
+                }
             }
 
             auto service = std::make_shared<TypedService<TInterface>>();
             service->SetCreator([] { return std::make_shared<TImplementation>(); });
 
-            scopedServices.insert({typeName, service});
+            scopedServices[typeName][tag] = service;
         }
 
 
@@ -255,11 +270,16 @@ namespace DI {
         * @throw std::runtime_error if the singleton service is not found in the Container.
         */
         template<typename TInterface>
-        std::shared_ptr<TInterface> ResolveSingleton() {
+        std::shared_ptr<TInterface> ResolveSingleton(std::string tag = "") {
             std::string typeName = typeid(TInterface).name();
 
-            auto it = singletonServices.find(typeName);
-            if (it == singletonServices.end()) {
+            auto map = singletonServices.find(typeName);
+            if (map == singletonServices.end()) {
+                throw std::runtime_error("Singleton Service not found: " + typeName);
+            }
+
+            auto it = map->second.find(tag);
+            if (it == map->second.end()) {
                 throw std::runtime_error("Singleton Service not found: " + typeName);
             }
 
@@ -279,11 +299,16 @@ namespace DI {
         * @throw std::runtime_error if the transient service is not found in the Container.
         */
         template<typename TInterface>
-        std::shared_ptr<TInterface> ResolveTransient() {
+        std::shared_ptr<TInterface> ResolveTransient(std::string tag = "") {
             std::string typeName = typeid(TInterface).name();
-            auto it = transientServices.find(typeName);
+            auto map = transientServices.find(typeName);
 
-            if (it == transientServices.end()) {
+            if (map == transientServices.end()) {
+                throw std::runtime_error("Transient Service not found: " + typeName);
+            }
+
+            auto it = map->second.find(tag);
+            if (it == map->second.end()) {
                 throw std::runtime_error("Transient Service not found: " + typeName);
             }
 
@@ -323,16 +348,21 @@ namespace DI {
         * @throw std::runtime_error if the service was not registered.
         */
         template<typename TInterface>
-        std::weak_ptr<TInterface> ResolveScoped(std::shared_ptr<Scope> &scope) {
+        std::weak_ptr<TInterface> ResolveScoped(std::shared_ptr<Scope> &scope, std::string tag = "") {
             std::string typeName = typeid(TInterface).name();
 
             // If the scope already has the service, we don't create a new one
             if (scope->services.count(typeName))
                 return {};
 
-            auto it = scopedServices.find(typeName);
-            if (it == scopedServices.end()) {
+            auto map = scopedServices.find(typeName);
+            if (map == scopedServices.end()) {
                 throw std::runtime_error("Service was not registered: " + typeName);
+            }
+
+            auto it = map->second.find(tag);
+            if (it == map->second.end()) {
+                throw std::runtime_error("Service was not found: " + typeName);
             }
 
             auto val = std::static_pointer_cast<TypedService<TInterface>>(it->second);
@@ -345,11 +375,11 @@ namespace DI {
     private:
         Container() = default;
 
-        std::unordered_map<std::string, std::shared_ptr<BaseService>> scopedServices;
-        std::unordered_map<std::string, std::shared_ptr<BaseService>> singletonServices;
-        std::unordered_map<std::string, std::shared_ptr<BaseService>> transientServices;
+        std::unordered_map<std::string, MapType> scopedServices;
+        std::unordered_map<std::string, MapType> singletonServices;
+        std::unordered_map<std::string, MapType> transientServices;
     };
 
 }
 
-#endif //INJECTTORTEST_CONTAINER_H
+#endif //INJECTTORTEST_CONTAINER_HPP

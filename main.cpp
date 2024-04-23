@@ -1,6 +1,11 @@
-#include <iostream>
+#include "Examples/SimpleExample.h"
+#include "Examples/SubDependencyExample.h"
+#include "Examples/AdvancedExample.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    SimpleExample::RunSimpleService();
+    SubDependencies::RunSubDependency();
+    AdvancedExample::RunAdvanceExample();
+
     return 0;
 }
